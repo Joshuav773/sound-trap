@@ -73,8 +73,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Upload new beat
-  app.post("/api/beats", upload.single('beatFile'), async (req, res) => {
+  // Admin upload endpoint - protected (in future would use proper auth)
+  app.post("/api/admin/beats", upload.single('beatFile'), async (req, res) => {
     try {
       if (!req.file) {
         return res.status(400).json({ message: "No audio file provided" });

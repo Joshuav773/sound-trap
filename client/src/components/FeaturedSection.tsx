@@ -2,8 +2,8 @@ import { useQuery } from "@tanstack/react-query";
 import { Star } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import BeatCard from "./BeatCard";
 import { Skeleton } from "@/components/ui/skeleton";
+import BeatCard from "./BeatCard";
 import type { Beat } from "@shared/schema";
 
 export default function FeaturedSection() {
@@ -63,14 +63,14 @@ export default function FeaturedSection() {
   }
 
   return (
-    <section className="py-8 bg-gradient-to-r from-primary/20 to-secondary/20">
+    <section className="py-8 bg-gradient-to-r from-primary/10 to-secondary/10 border-b border-gray-700">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold flex items-center">
-            <Star className="mr-2 text-accent" />
-            Featured Beats
+          <h2 className="text-3xl font-bold flex items-center">
+            <Star className="mr-3 text-accent" />
+            <span className="gradient-text">Fresh Out The Trap</span>
           </h2>
-          <span className="text-sm text-gray-300">Recently Added & Top Sellers</span>
+          <span className="text-sm text-gray-400">Latest Drops & Fire Beats</span>
         </div>
         
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -78,13 +78,13 @@ export default function FeaturedSection() {
             <div key={beat.id} className="relative">
               <div className="absolute top-4 left-4 z-10">
                 <Badge 
-                  className={`text-xs font-semibold ${
+                  className={`text-xs font-bold shadow-lg ${
                     index === 0 ? 'bg-accent text-black' : 
-                    index === 1 ? 'bg-primary text-white' : 
-                    'bg-yellow-500 text-black'
+                    index === 1 ? 'bg-secondary text-black' : 
+                    'bg-primary text-black'
                   }`}
                 >
-                  {index === 0 ? 'NEW' : index === 1 ? 'HOT' : 'TRENDING'}
+                  {index === 0 ? 'FRESH' : index === 1 ? 'FIRE' : 'HEAT'}
                 </Badge>
               </div>
               <BeatCard beat={beat} featured />

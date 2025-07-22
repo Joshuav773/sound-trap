@@ -1,12 +1,17 @@
-# BeatStore - Beat Marketplace Application
+# SoundTrap - Beat Marketplace Application
 
 ## Overview
 
-BeatStore is a modern full-stack beat marketplace web application that allows producers to upload and sell their beats while providing customers with search, preview, and purchase functionality. The application features a sleek dark-themed interface with comprehensive filtering options and licensing tiers.
+SoundTrap is a modern full-stack beat marketplace web application with a trap house theme - "Where Beats Meet The Streets". The platform allows producers to upload and sell their beats while providing customers with search, preview, and purchase functionality. Features a dark trap house aesthetic with purple, gold, and green accents, focusing on Hip Hop, Trap, and Drill genres.
 
 ## User Preferences
 
-Preferred communication style: Simple, everyday language.
+- Preferred communication style: Simple, everyday language
+- App branding: SoundTrap with trap house theme ("simulating a trap house but we sell beats instead")
+- Default genre filter: Hip Hop 
+- Compact beat card layout for browsing
+- Upload functionality restricted to admin only (public users cannot upload)
+- Admin access via /admin route for content management
 
 ## System Architecture
 
@@ -33,11 +38,11 @@ The application follows a modern monorepo architecture with clear separation bet
 - **Purchases**: Customer information, purchase type (lease/exclusive), amount, timestamps
 
 ### Frontend Components
-- **BeatCard**: Individual beat display with audio preview, pricing, and purchase options
+- **BeatCard**: Individual beat display with audio preview, pricing, and purchase options (compact layout for browsing)
 - **AudioPlayer**: Custom audio playback controls with waveform visualization
-- **SearchFilters**: Advanced filtering by genre, key, BPM range with real-time search
-- **FeaturedSection**: Highlighted beats for promotional purposes
-- **UploadModal**: Producer interface for beat submissions
+- **SearchFilters**: Advanced filtering by genre (defaults to Hip Hop), key, BPM range with trap-themed genres
+- **FeaturedSection**: "Fresh Out The Trap" section highlighting new drops and fire beats
+- **AdminUpload**: Protected admin interface for beat uploads (accessible via /admin route)
 - **Purchase Flow**: Customer information collection and transaction handling
 
 ### Backend Services

@@ -163,6 +163,8 @@ export class MemStorage implements IStorage {
     const id = this.currentBeatId++;
     const beat: Beat = {
       ...insertBeat,
+      tags: insertBeat.tags || [],
+      isFeatured: insertBeat.isFeatured || false,
       id,
       createdAt: new Date(),
     };
