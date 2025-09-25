@@ -119,9 +119,12 @@ export default function BeatCard({ beat, featured = false }: BeatCardProps) {
             <AudioPlayer beatTitle={beat.title} duration={beat.duration} />
           </div>
           
-          <h3 className={`font-bold mb-2 ${featured ? 'text-xl' : 'text-lg'} text-white`}>
+          <h3 className={`font-bold mb-1 ${featured ? 'text-xl' : 'text-lg'} text-white`}>
             {beat.title}
           </h3>
+          <p className="text-gray-400 text-xs mb-3" data-testid={`text-producer-${beat.id}`}>
+            by {beat.producer}
+          </p>
           <div className={`text-gray-300 mb-3 ${featured ? 'text-sm' : 'text-xs'}`}>
             <div className="flex items-center justify-between">
               <span className="font-medium">{beat.bpm} BPM</span>

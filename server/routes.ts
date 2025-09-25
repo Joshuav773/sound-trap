@@ -27,7 +27,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get all beats
   app.get("/api/beats", async (req, res) => {
     try {
-      const { search, genre, key, bpmRange } = req.query;
+      const { search, genre, key, bpmRange, featured } = req.query;
       
       const beats = await storage.searchBeats(
         search as string || "",
@@ -35,6 +35,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           genre: genre as string,
           key: key as string,
           bpmRange: bpmRange as string,
+          featured: featured === 'true',
         }
       );
       
@@ -82,6 +83,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const beatData = {
         title: req.body.title,
+        producer: req.body.producer,
         fileName: req.file.originalname,
         filePath: `/uploads/${req.file.filename}`,
         duration: parseInt(req.body.duration) || 120, // Default 2 minutes

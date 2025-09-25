@@ -5,6 +5,7 @@ import { z } from "zod";
 export const beats = pgTable("beats", {
   id: serial("id").primaryKey(),
   title: text("title").notNull(),
+  producer: text("producer").notNull(),
   fileName: text("file_name").notNull(),
   filePath: text("file_path").notNull(),
   duration: integer("duration").notNull(), // in seconds

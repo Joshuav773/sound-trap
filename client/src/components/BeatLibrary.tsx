@@ -22,8 +22,11 @@ export default function BeatLibrary({ searchQuery, filters }: BeatLibraryProps) 
   if (filters.key && filters.key !== "All Keys") queryParams.append('key', filters.key);
   if (filters.bpmRange && filters.bpmRange !== "All BPM") queryParams.append('bpmRange', filters.bpmRange);
   
+  const queryString = queryParams.toString();
+  const apiUrl = queryString ? `/api/beats?${queryString}` : "/api/beats";
+  
   const { data: beats, isLoading } = useQuery<Beat[]>({
-    queryKey: ["/api/beats", queryParams.toString()],
+    queryKey: [apiUrl],
   });
 
   if (isLoading) {

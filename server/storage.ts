@@ -5,7 +5,7 @@ export interface IStorage {
   getBeat(id: number): Promise<Beat | undefined>;
   getAllBeats(): Promise<Beat[]>;
   getFeaturedBeats(): Promise<Beat[]>;
-  searchBeats(query: string, filters: { genre?: string; key?: string; bpmRange?: string }): Promise<Beat[]>;
+  searchBeats(query: string, filters: { genre?: string; key?: string; bpmRange?: string; featured?: boolean }): Promise<Beat[]>;
   createBeat(beat: InsertBeat): Promise<Beat>;
   updateBeat(id: number, beat: Partial<InsertBeat>): Promise<Beat | undefined>;
   deleteBeat(id: number): Promise<boolean>;
@@ -35,6 +35,7 @@ export class MemStorage implements IStorage {
     const initialBeats: InsertBeat[] = [
       {
         title: "Dark Trap Anthem",
+        producer: "TrapKing",
         fileName: "dark-trap-anthem.mp3",
         filePath: "/uploads/dark-trap-anthem.mp3",
         duration: 150,
@@ -47,6 +48,7 @@ export class MemStorage implements IStorage {
       },
       {
         title: "Smooth Vibes",
+        producer: "SoulBeats",
         fileName: "smooth-vibes.mp3",
         filePath: "/uploads/smooth-vibes.mp3",
         duration: 195,
@@ -59,6 +61,7 @@ export class MemStorage implements IStorage {
       },
       {
         title: "Electric Dreams",
+        producer: "SynthWave",
         fileName: "electric-dreams.mp3",
         filePath: "/uploads/electric-dreams.mp3",
         duration: 165,
@@ -71,6 +74,7 @@ export class MemStorage implements IStorage {
       },
       {
         title: "Night Crawler",
+        producer: "DarkBeats",
         fileName: "night-crawler.mp3",
         filePath: "/uploads/night-crawler.mp3",
         duration: 135,
@@ -83,6 +87,7 @@ export class MemStorage implements IStorage {
       },
       {
         title: "City Lights",
+        producer: "UrbanSounds",
         fileName: "city-lights.mp3",
         filePath: "/uploads/city-lights.mp3",
         duration: 118,
@@ -116,15 +121,23 @@ export class MemStorage implements IStorage {
       .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
   }
 
-  async searchBeats(query: string, filters: { genre?: string; key?: string; bpmRange?: string }): Promise<Beat[]> {
+  async searchBeats(query: string, filters: { genre?: string; key?: string; bpmRange?: string; featured?: boolean }): Promise<Beat[]> {
     let results = Array.from(this.beats.values());
 
-    // Text search
+    // Featured filter (apply first if specified)
+    if (filters.featured !== undefined) {
+      results = results.filter(beat => beat.isFeatured === filters.featured);
+    }
+
+    // Enhanced text search - search by beat name (title), producer, tags, and key
     if (query) {
       const lowerQuery = query.toLowerCase();
       results = results.filter(beat => 
         beat.title.toLowerCase().includes(lowerQuery) ||
-        beat.tags.some(tag => tag.toLowerCase().includes(lowerQuery))
+        (beat.producer && beat.producer.toLowerCase().includes(lowerQuery)) ||
+        beat.key.toLowerCase().includes(lowerQuery) ||
+        beat.tags.some(tag => tag.toLowerCase().includes(lowerQuery)) ||
+        beat.bpm.toString().includes(query) // Allow BPM search in main search
       );
     }
 

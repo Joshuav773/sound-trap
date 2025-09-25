@@ -21,7 +21,7 @@ export default function Home() {
         filters={filters}
         setFilters={setFilters}
       />
-      <FeaturedSection />
+      <FeaturedSection searchQuery={searchQuery} filters={filters} />
       <BeatLibrary searchQuery={searchQuery} filters={filters} />
       
       {/* Footer */}

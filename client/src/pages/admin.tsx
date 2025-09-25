@@ -13,6 +13,7 @@ export default function AdminUpload() {
   const [file, setFile] = useState<File | null>(null);
   const [formData, setFormData] = useState({
     title: '',
+    producer: '',
     bpm: '',
     key: '',
     tags: '',
@@ -50,6 +51,7 @@ export default function AdminUpload() {
       setFile(null);
       setFormData({
         title: '',
+        producer: '',
         bpm: '',
         key: '',
         tags: '',
@@ -98,7 +100,7 @@ export default function AdminUpload() {
       return;
     }
 
-    if (!formData.title || !formData.bpm || !formData.key || !formData.leasePrice || !formData.exclusivePrice) {
+    if (!formData.title || !formData.producer || !formData.bpm || !formData.key || !formData.leasePrice || !formData.exclusivePrice) {
       toast({
         title: "Missing Information",
         description: "Please fill in all required fields.",
@@ -110,6 +112,7 @@ export default function AdminUpload() {
     const data = new FormData();
     data.append('beatFile', file);
     data.append('title', formData.title);
+    data.append('producer', formData.producer);
     data.append('bpm', formData.bpm);
     data.append('key', formData.key);
     data.append('tags', formData.tags);
@@ -169,17 +172,32 @@ export default function AdminUpload() {
                   </div>
                 </div>
                 
-                {/* Beat Title */}
-                <div>
-                  <Label htmlFor="title" className="text-white">Beat Title*</Label>
-                  <Input
-                    id="title"
-                    value={formData.title}
-                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                    className="bg-gray-700 border-gray-600 text-white mt-2"
-                    placeholder="Enter beat title"
-                    required
-                  />
+                {/* Beat Title and Producer */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="title" className="text-white">Beat Title*</Label>
+                    <Input
+                      id="title"
+                      value={formData.title}
+                      onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                      className="bg-gray-700 border-gray-600 text-white mt-2"
+                      placeholder="Enter beat title"
+                      required
+                      data-testid="input-title"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="producer" className="text-white">Producer*</Label>
+                    <Input
+                      id="producer"
+                      value={formData.producer}
+                      onChange={(e) => setFormData({ ...formData, producer: e.target.value })}
+                      className="bg-gray-700 border-gray-600 text-white mt-2"
+                      placeholder="Producer name"
+                      required
+                      data-testid="input-producer"
+                    />
+                  </div>
                 </div>
                 
                 {/* BPM and Key */}

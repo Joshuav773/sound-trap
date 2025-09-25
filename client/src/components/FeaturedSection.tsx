@@ -6,9 +6,29 @@ import { Skeleton } from "@/components/ui/skeleton";
 import BeatCard from "./BeatCard";
 import type { Beat } from "@shared/schema";
 
-export default function FeaturedSection() {
+interface FeaturedSectionProps {
+  searchQuery: string;
+  filters: {
+    genre: string;
+    key: string;
+    bpmRange: string;
+  };
+}
+
+export default function FeaturedSection({ searchQuery, filters }: FeaturedSectionProps) {
+  // Build query parameters for featured beats with filters
+  const queryParams = new URLSearchParams();
+  queryParams.append('featured', 'true'); // Only get featured beats
+  if (searchQuery) queryParams.append('search', searchQuery);
+  if (filters.genre && filters.genre !== "All Genres") queryParams.append('genre', filters.genre);
+  if (filters.key && filters.key !== "All Keys") queryParams.append('key', filters.key);
+  if (filters.bpmRange && filters.bpmRange !== "All BPM") queryParams.append('bpmRange', filters.bpmRange);
+  
+  const queryString = queryParams.toString();
+  const apiUrl = queryString ? `/api/beats?${queryString}` : "/api/beats?featured=true";
+  
   const { data: featuredBeats, isLoading } = useQuery<Beat[]>({
-    queryKey: ["/api/beats/featured"],
+    queryKey: [apiUrl],
   });
 
   if (isLoading) {
