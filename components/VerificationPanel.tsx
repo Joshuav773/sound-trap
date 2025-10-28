@@ -197,20 +197,20 @@ export default function VerificationPanel() {
                         Current Verification Status
                       </CardTitle>
                     </CardHeader>
-                    <CardContent className="space-y-4">
+                    <CardContent className="space-y-6">
                       <div className="grid grid-cols-2 gap-6">
-                        <div className="space-y-3">
+                        <div className="space-y-4">
                           <Label className="text-sm font-medium">Verification Status</Label>
                           <VerificationBadge 
                             badge={verificationData.verificationBadge as any} 
                             size="md" 
                           />
                         </div>
-                        <div className="space-y-3">
+                        <div className="space-y-4">
                           <Label className="text-sm font-medium">Trust Score</Label>
                           <TrustScore score={verificationData.trustScore} />
                         </div>
-                        <div className="space-y-3">
+                        <div className="space-y-4">
                           <Label className="text-sm font-medium">Verification Method</Label>
                           {verificationData.verificationMethod ? (
                             <Badge className={getVerificationMethodColor(verificationData.verificationMethod)}>
@@ -220,7 +220,7 @@ export default function VerificationPanel() {
                             <span className="text-muted-foreground text-sm">Not verified</span>
                           )}
                         </div>
-                        <div className="space-y-3">
+                        <div className="space-y-4">
                           <Label className="text-sm font-medium">Verified Date</Label>
                           <p className="text-sm font-medium">
                             {verificationData.verificationDate 

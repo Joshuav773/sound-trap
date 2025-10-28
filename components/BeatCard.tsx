@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from "react";
-import { Heart, FileText, Users } from "lucide-react";
+import { Heart, FileText, Users, Download } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -49,6 +49,30 @@ export default function BeatCard({ beat, featured = false }: BeatCardProps) {
       title: "Added to cart!",
       description: `${beat.title} added to your cart`,
     })
+  };
+
+  const handleTryBeforeYouBuy = async () => {
+    try {
+      // Track the download
+      await apiRequest('POST', '/api/trial-downloads', {
+        beatId: beat.id,
+        customerEmail: customerData.email,
+        customerName: customerData.name,
+      });
+
+      // In production, this would download a tagged MP3 file
+      // For now, we'll just show a success message
+      toast({
+        title: "Demo Download!",
+        description: "A tagged demo of this beat has been added to your downloads",
+      });
+    } catch (error) {
+      toast({
+        title: "Download Failed",
+        description: "Failed to download demo. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const formatDuration = (seconds: number) => {
@@ -167,6 +191,15 @@ export default function BeatCard({ beat, featured = false }: BeatCardProps) {
           </div>
           
           <div className="space-y-2">
+            <Button
+              size={featured ? 'default' : 'sm'}
+              variant="outline"
+              className="w-full border-primary text-primary hover:bg-primary/10 font-medium"
+              onClick={handleTryBeforeYouBuy}
+            >
+              <Download className="mr-2 h-4 w-4" />
+              Try Before You Buy (Free Demo)
+            </Button>
             <div className="grid grid-cols-2 gap-2">
               <Button
                 size={featured ? 'default' : 'sm'}

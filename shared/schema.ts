@@ -51,6 +51,64 @@ export const purchases = pgTable("purchases", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
+// Cart abandonment tracking
+export const abandonedCarts = pgTable("abandoned_carts", {
+  id: serial("id").primaryKey(),
+  sessionId: text("session_id").notNull(),
+  customerEmail: text("customer_email"),
+  customerName: text("customer_name"),
+  cartItems: text("cart_items").notNull(), // JSON array of items
+  totalAmount: decimal("total_amount", { precision: 10, scale: 2 }).notNull(),
+  abandonedAt: timestamp("abandoned_at").notNull().defaultNow(),
+  recoveredAt: timestamp("recovered_at"),
+  isRecovered: boolean("is_recovered").notNull().default(false),
+  reminderSentCount: integer("reminder_sent_count").notNull().default(0),
+  lastReminderSent: timestamp("last_reminder_sent"),
+});
+
+// "Try Before You Buy" downloads tracking
+export const trialDownloads = pgTable("trial_downloads", {
+  id: serial("id").primaryKey(),
+  beatId: integer("beat_id").notNull(),
+  customerEmail: text("customer_email"),
+  customerName: text("customer_name"),
+  ipAddress: text("ip_address"),
+  downloadedAt: timestamp("downloaded_at").notNull().defaultNow(),
+  convertedToPurchase: boolean("converted_to_purchase").notNull().default(false),
+});
+
+// Dispute resolution system
+export const disputes = pgTable("disputes", {
+  id: serial("id").primaryKey(),
+  purchaseId: integer("purchase_id").notNull(),
+  complainantId: integer("complainant_id").notNull(), // User who filed dispute
+  respondentId: integer("respondent_id").notNull(), // Producer being disputed
+  disputeType: text("dispute_type").notNull(), // 'copyright', 'quality', 'delivery', 'refund'
+  description: text("description").notNull(),
+  evidence: text("evidence"), // JSON array of evidence URLs
+  status: text("status").notNull().default("open"), // 'open', 'under_review', 'resolved', 'closed'
+  resolution: text("resolution"), // Admin resolution notes
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+  resolvedAt: timestamp("resolved_at"),
+  resolvedBy: integer("resolved_by"), // Admin user ID
+});
+
+// Escrow system for high-value transactions
+export const escrowTransactions = pgTable("escrow_transactions", {
+  id: serial("id").primaryKey(),
+  purchaseId: integer("purchase_id").notNull(),
+  buyerId: integer("buyer_id").notNull(),
+  sellerId: integer("seller_id").notNull(),
+  amount: decimal("amount", { precision: 10, scale: 2 }).notNull(),
+  status: text("status").notNull().default("pending"), // 'pending', 'held', 'released', 'refunded'
+  releaseConditions: text("release_conditions").notNull(), // JSON conditions
+  heldAt: timestamp("held_at"),
+  releasedAt: timestamp("released_at"),
+  refundedAt: timestamp("refunded_at"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
 export const storeProducts = pgTable("store_products", {
   id: serial("id").primaryKey(),
   title: text("title").notNull(),
