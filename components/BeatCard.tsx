@@ -13,6 +13,7 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/utils";
 import AudioPlayer from "./AudioPlayer";
 import Waveform from "./Waveform";
+import VerificationBadge from "./VerificationBadge";
 import type { Beat } from "@shared/schema";
 
 interface BeatCardProps {
@@ -142,9 +143,13 @@ export default function BeatCard({ beat, featured = false }: BeatCardProps) {
           <h3 className={`font-bold mb-1 ${featured ? 'text-xl' : 'text-lg'} text-foreground`}>
             {beat.title}
           </h3>
-          <p className="text-muted-foreground text-xs mb-3" data-testid={`text-producer-${beat.id}`}>
-            by <a href={`/${encodeURIComponent(beat.producer)}`} className="hover:text-primary transition-colors font-medium">{beat.producer}</a>
-          </p>
+          <div className="flex items-center gap-2 mb-3">
+            <p className="text-muted-foreground text-xs" data-testid={`text-producer-${beat.id}`}>
+              by <a href={`/${encodeURIComponent(beat.producer)}`} className="hover:text-primary transition-colors font-medium">{beat.producer}</a>
+            </p>
+            {/* TODO: Add verification status when we have producer data */}
+            {/* <VerificationBadge badge="verified" size="sm" /> */}
+          </div>
           <div className={`text-foreground/80 mb-3 ${featured ? 'text-sm' : 'text-xs'}`}>
             <div className="flex items-center justify-between">
               <span className="font-medium">{beat.bpm} BPM</span>

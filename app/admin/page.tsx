@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input"
 import { useToast } from "@/hooks/use-toast"
 import { useQuery } from "@tanstack/react-query"
 import Header from "@/components/Header"
+import VerificationPanel from "@/components/VerificationPanel"
 
 export default function AdminPanel() {
   const router = useRouter()
@@ -112,6 +113,11 @@ export default function AdminPanel() {
             <ActiveRoomsWidget />
           </CardContent>
         </Card>
+
+        {/* Producer Verification Panel */}
+        <div className="mb-8">
+          <VerificationPanel />
+        </div>
 
         {/* Users List */}
         <Card>

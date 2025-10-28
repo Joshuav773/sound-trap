@@ -10,6 +10,16 @@ export const users = pgTable("users", {
   role: text("role").notNull().default("client"), // admin, artist, client
   leasingTerms: text("leasing_terms"), // Artist licensing/leasing terms
   publishingTerms: text("publishing_terms"), // Publishing terms
+  // Verification fields
+  isVerified: boolean("is_verified").notNull().default(false),
+  verificationMethod: text("verification_method"), // 'identity', 'portfolio', 'references', 'ascap', 'bmi', 'sesac'
+  verificationDate: timestamp("verification_date"),
+  trustScore: integer("trust_score").notNull().default(0), // 0-100
+  verificationBadge: text("verification_badge").default("unverified"), // 'unverified', 'verified', 'premium', 'elite'
+  // PRO (Performing Rights Organization) membership
+  ascapMemberNumber: text("ascap_member_number"), // ASCAP member ID for verification
+  bmiMemberNumber: text("bmi_member_number"), // BMI member ID for verification
+  sesacMemberNumber: text("sesac_member_number"), // SESAC member ID for verification
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
@@ -57,6 +67,30 @@ export const storeProducts = pgTable("store_products", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
+export const licenseTemplates = pgTable("license_templates", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(), // 'Basic Lease', 'Premium Lease', 'Exclusive Rights'
+  type: text("type").notNull(), // 'lease', 'exclusive', 'free'
+  description: text("description").notNull(),
+  // Plain language terms
+  streamLimit: integer("stream_limit"), // null = unlimited
+  musicVideos: integer("music_videos"),
+  radioAirplay: boolean("radio_airplay").notNull().default(false),
+  commercialUse: boolean("commercial_use").notNull().default(false),
+  syncRights: boolean("sync_rights").notNull().default(false),
+  // Legal terms
+  plainLanguageSummary: text("plain_language_summary").notNull(),
+  legalContract: text("legal_contract").notNull(),
+  // Pricing
+  price: decimal("price", { precision: 10, scale: 2 }).notNull(),
+  // Files included
+  includesMp3: boolean("includes_mp3").notNull().default(true),
+  includesWav: boolean("includes_wav").notNull().default(false),
+  includesStems: boolean("includes_stems").notNull().default(false),
+  includesTrackout: boolean("includes_trackout").notNull().default(false),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
 export const insertBeatSchema = createInsertSchema(beats).omit({
   id: true,
   createdAt: true,
@@ -77,6 +111,11 @@ export const insertStoreProductSchema = createInsertSchema(storeProducts).omit({
   createdAt: true,
 });
 
+export const insertLicenseTemplateSchema = createInsertSchema(licenseTemplates).omit({
+  id: true,
+  createdAt: true,
+});
+
 export type InsertBeat = z.infer<typeof insertBeatSchema>;
 export type Beat = typeof beats.$inferSelect;
 export type InsertPurchase = z.infer<typeof insertPurchaseSchema>;
@@ -85,3 +124,5 @@ export type User = typeof users.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type InsertStoreProduct = z.infer<typeof insertStoreProductSchema>;
 export type StoreProduct = typeof storeProducts.$inferSelect;
+export type InsertLicenseTemplate = z.infer<typeof insertLicenseTemplateSchema>;
+export type LicenseTemplate = typeof licenseTemplates.$inferSelect;
