@@ -1,0 +1,9 @@
+#!/usr/bin/expect -f
+
+set timeout 30
+spawn npm run db:push
+
+expect "Is store_products table created or renamed from another table?"
+send "\033\[B\r"
+
+expect eof

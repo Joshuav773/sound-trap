@@ -1,0 +1,116 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Modern Dark Theme - BeatStars inspired */
+  --background: hsl(240, 10%, 4%);
+  --foreground: hsl(0, 0%, 98%);
+  --muted: hsl(240, 4.8%, 10%);
+  --muted-foreground: hsl(240, 5%, 64%);
+  --popover: hsl(240, 10%, 4%);
+  --popover-foreground: hsl(0, 0%, 98%);
+  --card: hsl(240, 6%, 10%);
+  --card-foreground: hsl(0, 0%, 98%);
+  --border: hsl(240, 6%, 15%);
+  --input: hsl(240, 6%, 12%);
+  
+  /* Modern Accent Colors */
+  --primary: hsl(262, 83%, 58%);
+  --primary-foreground: hsl(0, 0%, 98%);
+  --secondary: hsl(210, 100%, 50%);
+  --secondary-foreground: hsl(0, 0%, 98%);
+  --accent: hsl(142, 71%, 45%);
+  --accent-foreground: hsl(0, 0%, 98%);
+  --destructive: hsl(0, 72%, 51%);
+  --destructive-foreground: hsl(0, 0%, 98%);
+  --ring: hsl(262, 83%, 58%);
+  --radius: 0.75rem;
+  
+  /* Custom SoundTrap Colors */
+  --trap-dark: hsl(240, 6%, 10%);
+  --trap-darker: hsl(240, 10%, 4%);
+  --trap-purple: hsl(262, 83%, 58%);
+  --trap-blue: hsl(210, 100%, 50%);
+  --trap-green: hsl(142, 71%, 45%);
+  --trap-gradient: linear-gradient(135deg, hsl(262, 83%, 58%) 0%, hsl(210, 100%, 50%) 100%);
+}
+
+.dark {
+  --background: hsl(240, 10%, 4%);
+  --foreground: hsl(0, 0%, 98%);
+  --muted: hsl(240, 4.8%, 10%);
+  --muted-foreground: hsl(240, 5%, 64%);
+  --popover: hsl(240, 10%, 4%);
+  --popover-foreground: hsl(0, 0%, 98%);
+  --card: hsl(240, 6%, 10%);
+  --card-foreground: hsl(0, 0%, 98%);
+  --border: hsl(240, 6%, 15%);
+  --input: hsl(240, 6%, 12%);
+  --primary: hsl(262, 83%, 58%);
+  --primary-foreground: hsl(0, 0%, 98%);
+  --secondary: hsl(210, 100%, 50%);
+  --secondary-foreground: hsl(0, 0%, 98%);
+  --accent: hsl(142, 71%, 45%);
+  --accent-foreground: hsl(0, 0%, 98%);
+  --destructive: hsl(0, 72%, 51%);
+  --destructive-foreground: hsl(0, 0%, 98%);
+  --ring: hsl(262, 83%, 58%);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+    background: 
+      radial-gradient(circle at 20% 50%, rgba(139, 92, 246, 0.03) 0%, transparent 50%),
+      radial-gradient(circle at 80% 80%, rgba(59, 130, 246, 0.03) 0%, transparent 50%),
+      radial-gradient(circle at 40% 20%, rgba(16, 185, 129, 0.02) 0%, transparent 50%),
+      linear-gradient(135deg, hsl(240, 10%, 4%) 0%, hsl(240, 8%, 6%) 100%);
+    background-attachment: fixed;
+    color: hsl(0, 0%, 98%);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+    min-height: 100vh;
+  }
+}
+
+@layer components {
+  .gradient-text {
+    color: var(--primary);
+    font-weight: 700;
+  }
+
+  .card-hover {
+    transition: all 0.3s ease;
+  }
+
+  .card-hover:hover {
+    transform: translateY(-4px);
+    border-color: hsl(262, 83%, 58%);
+    box-shadow: 0 8px 32px hsla(262, 83%, 58%, 0.25);
+  }
+
+  .waveform-bar {
+    background: currentColor;
+    width: 2px;
+    margin: 0 1px;
+    border-radius: 1px;
+    transition: height 0.1s ease;
+  }
+
+  .audio-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+}
+
+@layer utilities {
+  .animate-pulse-slow {
+    animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+}
+
