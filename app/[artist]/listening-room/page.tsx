@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useParams, useRouter } from "next/navigation"
-import { Users, PowerOff, Radio, Music, User } from "lucide-react"
+import { Users, PowerOff, Radio, Music, User, Heart, MessageCircle, Volume2, VolumeX, Play, Pause, SkipForward, Share2, Copy } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -22,6 +22,14 @@ export default function ArtistListeningRoom() {
   const [showGuestNamePrompt, setShowGuestNamePrompt] = useState(false)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
+  const [isPlaying, setIsPlaying] = useState(true)
+  const [volume, setVolume] = useState(80)
+  const [isMuted, setIsMuted] = useState(false)
+  const [currentTrack, setCurrentTrack] = useState("Untitled Beat")
+  const [chatMessages, setChatMessages] = useState<Array<{id: number, user: string, message: string, timestamp: Date}>>([])
+  const [newMessage, setNewMessage] = useState('')
+  const [likes, setLikes] = useState(0)
+  const [hasLiked, setHasLiked] = useState(false)
   const roomStorageKey = `listening-room-${decodeURIComponent(artist).toLowerCase()}`
 
   // Get current user info
@@ -124,6 +132,46 @@ export default function ArtistListeningRoom() {
     }
   }
 
+  // Interactive functions for listeners
+  const togglePlayPause = () => {
+    setIsPlaying(!isPlaying)
+  }
+
+  const toggleMute = () => {
+    setIsMuted(!isMuted)
+  }
+
+  const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setVolume(parseInt(e.target.value))
+  }
+
+  const handleLike = () => {
+    if (!hasLiked) {
+      setLikes(likes + 1)
+      setHasLiked(true)
+    }
+  }
+
+  const sendMessage = () => {
+    if (newMessage.trim()) {
+      const displayName = isAuthenticated ? userName : guestName
+      const message = {
+        id: Date.now(),
+        user: displayName,
+        message: newMessage.trim(),
+        timestamp: new Date()
+      }
+      setChatMessages(prev => [...prev, message])
+      setNewMessage('')
+    }
+  }
+
+  const copyRoomLink = () => {
+    navigator.clipboard.writeText(window.location.href)
+    // In production, show a toast notification
+    alert('Room link copied to clipboard!')
+  }
+
   useEffect(() => {
     if (isRoomOpen) {
       addUser()
@@ -140,10 +188,35 @@ export default function ArtistListeningRoom() {
       if (Math.random() > 0.9) {
         setRoomUsers(prev => [...prev, { name: `User${prev.length}`, status: 'listening' }])
       }
+      
+      // Simulate chat messages
+      if (Math.random() > 0.95 && chatMessages.length < 10) {
+        const demoMessages = [
+          "This beat is fire! 🔥",
+          "Love the vibe",
+          "Can't stop listening to this",
+          "Amazing work!",
+          "This goes hard",
+          "Where can I buy this?",
+          "Incredible production",
+          "The mix is perfect",
+          "This is going viral",
+          "Pure talent!"
+        ]
+        const randomMessage = demoMessages[Math.floor(Math.random() * demoMessages.length)]
+        const demoUser = `Listener${Math.floor(Math.random() * 10) + 1}`
+        
+        setChatMessages(prev => [...prev, {
+          id: Date.now(),
+          user: demoUser,
+          message: randomMessage,
+          timestamp: new Date()
+        }])
+      }
     }, 3000)
 
     return () => clearInterval(interval)
-  }, [])
+  }, [chatMessages.length])
 
   // Redirect to 404 if room is not open (only after loading is complete)
   useEffect(() => {
@@ -221,41 +294,145 @@ export default function ArtistListeningRoom() {
           </div>
         </div>
 
-        {/* Room Display with Connected Users */}
+        {/* Room Display with Enhanced Listener Experience */}
         <div className="grid lg:grid-cols-3 gap-6">
           {/* Main Room Card */}
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-2 space-y-6">
+            {/* Now Playing Card */}
             <Card>
-              <CardContent className="p-12 text-center">
-                <div className="mb-8">
-                  <div className="w-24 h-24 mx-auto mb-6 bg-primary/20 rounded-full flex items-center justify-center">
-                    <Radio className="w-12 h-12 text-primary" />
+              <CardContent className="p-8">
+                <div className="flex items-center gap-6">
+                  <div className="w-20 h-20 bg-primary/20 rounded-lg flex items-center justify-center">
+                    <Music className="w-10 h-10 text-primary" />
                   </div>
-                  <h2 className="text-3xl font-bold mb-4">{decodedArtist}'s Room</h2>
-                  <p className="text-lg text-muted-foreground mb-6">
-                    Live listening session in progress
-                  </p>
+                  <div className="flex-1">
+                    <h3 className="text-xl font-bold">{currentTrack}</h3>
+                    <p className="text-muted-foreground">by {decodedArtist}</p>
+                    <div className="flex items-center gap-4 mt-2">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={handleLike}
+                        className={hasLiked ? "text-red-500" : ""}
+                      >
+                        <Heart className={`w-4 h-4 mr-1 ${hasLiked ? "fill-current" : ""}`} />
+                        {likes}
+                      </Button>
+                      <Badge variant="secondary">
+                        <Users className="w-3 h-3 mr-1" />
+                        {roomUsers.length} listening
+                      </Badge>
+                    </div>
+                  </div>
                 </div>
+              </CardContent>
+            </Card>
 
-                <div className="space-y-4">
-                  <Badge className="bg-primary text-primary-foreground text-lg px-6 py-3">
-                    <Users className="mr-2 h-5 w-5" />
-                    {roomUsers.length} listening
-                  </Badge>
-                  
-                  <div className="text-sm text-muted-foreground">
-                    {isOwner ? 'You are hosting this room' : 'You are listening to this room'}
+            {/* Audio Controls Card */}
+            <Card>
+              <CardContent className="p-6">
+                <div className="space-y-6">
+                  {/* Playback Controls */}
+                  <div className="flex items-center justify-center gap-4">
+                    <Button variant="ghost" size="lg">
+                      <SkipForward className="w-5 h-5 rotate-180" />
+                    </Button>
+                    <Button 
+                      variant="default" 
+                      size="lg" 
+                      onClick={togglePlayPause}
+                      className="w-16 h-16 rounded-full"
+                    >
+                      {isPlaying ? <Pause className="w-6 h-6" /> : <Play className="w-6 h-6" />}
+                    </Button>
+                    <Button variant="ghost" size="lg">
+                      <SkipForward className="w-5 h-5" />
+                    </Button>
                   </div>
 
-                  <div className="flex justify-center mt-8">
+                  {/* Volume Controls */}
+                  <div className="flex items-center gap-4">
+                    <Button variant="ghost" size="sm" onClick={toggleMute}>
+                      {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+                    </Button>
+                    <div className="flex-1">
+                      <input
+                        type="range"
+                        min="0"
+                        max="100"
+                        value={isMuted ? 0 : volume}
+                        onChange={handleVolumeChange}
+                        className="w-full h-2 bg-muted rounded-lg appearance-none cursor-pointer"
+                      />
+                    </div>
+                    <span className="text-sm text-muted-foreground w-8">
+                      {isMuted ? 0 : volume}%
+                    </span>
+                  </div>
+
+                  {/* Room Status */}
+                  <div className="text-center">
+                    <div className="text-sm text-muted-foreground mb-2">
+                      {isOwner ? 'You are hosting this room' : 'You are listening to this room'}
+                    </div>
                     <Button 
                       variant="outline" 
-                      onClick={() => {
-                        navigator.clipboard.writeText(window.location.href)
-                        alert('Room link copied to clipboard!')
-                      }}
+                      onClick={copyRoomLink}
+                      className="mr-2"
                     >
+                      <Share2 className="w-4 h-4 mr-2" />
                       Share Room
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      onClick={copyRoomLink}
+                    >
+                      <Copy className="w-4 h-4 mr-2" />
+                      Copy Link
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Live Chat Card */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <MessageCircle className="mr-2 h-5 w-5" />
+                  Live Chat
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {/* Chat Messages */}
+                  <div className="h-48 overflow-y-auto space-y-2 border rounded-lg p-3 bg-muted/20">
+                    {chatMessages.map((msg) => (
+                      <div key={msg.id} className="text-sm">
+                        <span className="font-medium text-primary">{msg.user}:</span>
+                        <span className="ml-2">{msg.message}</span>
+                        <div className="text-xs text-muted-foreground">
+                          {msg.timestamp.toLocaleTimeString()}
+                        </div>
+                      </div>
+                    ))}
+                    {chatMessages.length === 0 && (
+                      <div className="text-center text-muted-foreground py-8">
+                        No messages yet. Start the conversation!
+                      </div>
+                    )}
+                  </div>
+                  
+                  {/* Message Input */}
+                  <div className="flex gap-2">
+                    <Input
+                      placeholder="Type a message..."
+                      value={newMessage}
+                      onChange={(e) => setNewMessage(e.target.value)}
+                      onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+                    />
+                    <Button onClick={sendMessage} disabled={!newMessage.trim()}>
+                      Send
                     </Button>
                   </div>
                 </div>
