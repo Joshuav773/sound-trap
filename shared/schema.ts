@@ -109,6 +109,21 @@ export const escrowTransactions = pgTable("escrow_transactions", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
+// PRO verification requests
+export const proVerificationRequests = pgTable("pro_verification_requests", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull(),
+  proType: text("pro_type").notNull(), // 'ascap', 'bmi', 'sesac'
+  memberNumber: text("member_number").notNull(),
+  documentUrl: text("document_url").notNull(), // URL to uploaded document
+  documentType: text("document_type").notNull(), // 'certificate', 'screenshot', 'email_confirmation'
+  status: text("status").notNull().default("pending"), // 'pending', 'approved', 'rejected'
+  adminNotes: text("admin_notes"), // Admin review notes
+  reviewedBy: integer("reviewed_by"), // Admin user ID who reviewed
+  reviewedAt: timestamp("reviewed_at"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
 export const storeProducts = pgTable("store_products", {
   id: serial("id").primaryKey(),
   title: text("title").notNull(),

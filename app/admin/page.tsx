@@ -10,6 +10,7 @@ import { useToast } from "@/hooks/use-toast"
 import { useQuery } from "@tanstack/react-query"
 import Header from "@/components/Header"
 import VerificationPanel from "@/components/VerificationPanel"
+import PROVerificationReviewPanel from "@/components/PROVerificationReviewPanel"
 
 export default function AdminPanel() {
   const router = useRouter()
@@ -117,6 +118,11 @@ export default function AdminPanel() {
         {/* Producer Verification Panel */}
         <div className="mb-8">
           <VerificationPanel />
+        </div>
+
+        {/* PRO Verification Review Panel */}
+        <div className="mb-8">
+          <PROVerificationReviewPanel />
         </div>
 
         {/* Users List */}

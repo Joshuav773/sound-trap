@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation"
 import { 
   User, Music, TrendingUp, DollarSign, ShoppingCart, 
   Upload, Shield, Download, LogOut, Settings, 
-  BarChart3, Users, Award, Calendar, Radio, FileText
+  BarChart3, Users, Award, Calendar, Radio, FileText, CheckCircle, Trash2
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
@@ -14,6 +14,8 @@ import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { useToast } from "@/hooks/use-toast"
 import Header from "@/components/Header"
+import PROVerificationRequest from "@/components/PROVerificationRequest"
+import AccountDeletion from "@/components/AccountDeletion"
 
 export default function Account() {
   const router = useRouter()
@@ -101,6 +103,7 @@ export default function Account() {
         { id: 'overview', label: 'Overview', icon: BarChart3 },
         { id: 'users', label: 'Users', icon: Users },
         { id: 'beats', label: 'Manage Beats', icon: Music },
+        { id: 'pro-verification', label: 'PRO Verification', icon: CheckCircle },
         { id: 'settings', label: 'Settings', icon: Settings },
       ]
     },
@@ -113,6 +116,7 @@ export default function Account() {
         { id: 'overview', label: 'Dashboard', icon: BarChart3 },
         { id: 'beats', label: 'My Beats', icon: Music },
         { id: 'earnings', label: 'Earnings', icon: DollarSign },
+        { id: 'pro-verification', label: 'PRO Verification', icon: CheckCircle },
         { id: 'settings', label: 'Settings', icon: Settings },
       ]
     },
@@ -432,6 +436,22 @@ export default function Account() {
                 </CardContent>
               </Card>
             )}
+
+            {/* Account Deletion - Dangerous Zone */}
+            <Card className="border-red-200 dark:border-red-800">
+              <CardHeader>
+                <CardTitle className="flex items-center text-red-600 dark:text-red-400">
+                  <Trash2 className="mr-2 h-5 w-5" />
+                  Danger Zone
+                </CardTitle>
+                <CardDescription>
+                  Permanently delete your account and all associated data
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <AccountDeletion userId={user.id} userRole={user.role} />
+              </CardContent>
+            </Card>
           </TabsContent>
 
           {/* Placeholder for other tabs */}
@@ -473,6 +493,10 @@ export default function Account() {
                 <p className="text-muted-foreground">No purchases yet. Start exploring!</p>
               </CardContent>
             </Card>
+          </TabsContent>
+
+          <TabsContent value="pro-verification" className="space-y-6">
+            <PROVerificationRequest userId={user.id} userRole={user.role} />
           </TabsContent>
         </Tabs>
       </div>

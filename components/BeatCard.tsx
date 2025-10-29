@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Heart, FileText, Users, Download } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -29,8 +29,30 @@ export default function BeatCard({ beat, featured = false }: BeatCardProps) {
     name: '',
     email: '',
   });
+  const [isRoomOpen, setIsRoomOpen] = useState(false);
 
   const { toast } = useToast();
+  
+  // Check if the producer's room is open
+  useEffect(() => {
+    const roomStorageKey = `listening-room-${beat.producer.toLowerCase()}`;
+    const checkRoomStatus = () => {
+      const roomData = localStorage.getItem(roomStorageKey);
+      if (roomData) {
+        const room = JSON.parse(roomData);
+        setIsRoomOpen(room.isOpen === true);
+      } else {
+        setIsRoomOpen(false);
+      }
+    };
+    
+    checkRoomStatus();
+    
+    // Check periodically for room status changes
+    const interval = setInterval(checkRoomStatus, 2000);
+    
+    return () => clearInterval(interval);
+  }, [beat.producer]);
   
   const handleAddToCart = (type: 'lease' | 'exclusive') => {
     const cart = JSON.parse(localStorage.getItem('cart') || '[]')
@@ -63,12 +85,12 @@ export default function BeatCard({ beat, featured = false }: BeatCardProps) {
       // In production, this would download a tagged MP3 file
       // For now, we'll just show a success message
       toast({
-        title: "Demo Download!",
+        title: "Free Demo Downloaded!",
         description: "A tagged demo of this beat has been added to your downloads",
       });
     } catch (error) {
       toast({
-        title: "Download Failed",
+        title: "Demo Download Failed",
         description: "Failed to download demo. Please try again.",
         variant: "destructive",
       });
@@ -198,7 +220,7 @@ export default function BeatCard({ beat, featured = false }: BeatCardProps) {
               onClick={handleTryBeforeYouBuy}
             >
               <Download className="mr-2 h-4 w-4" />
-              Try Before You Buy (Free Demo)
+                     Free Demo
             </Button>
             <div className="grid grid-cols-2 gap-2">
               <Button
@@ -224,13 +246,15 @@ export default function BeatCard({ beat, featured = false }: BeatCardProps) {
               <FileText className="inline mr-1 h-3 w-3" />
               License Terms & Splits
             </a>
-            <a 
-              href={`/${encodeURIComponent(beat.producer)}/listening-room`}
-              className="block text-center text-xs text-primary hover:underline transition-colors"
-            >
-              <Users className="inline mr-1 h-3 w-3" />
-              Join {beat.producer}'s Room
-            </a>
+            {isRoomOpen && (
+              <a 
+                href={`/${encodeURIComponent(beat.producer)}/listening-room`}
+                className="block text-center text-xs text-primary hover:underline transition-colors"
+              >
+                <Users className="inline mr-1 h-3 w-3" />
+                Join {beat.producer}'s Room
+              </a>
+            )}
           </div>
         </CardContent>
       </Card>

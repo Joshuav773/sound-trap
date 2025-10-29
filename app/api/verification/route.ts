@@ -52,29 +52,50 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 })
     }
 
+    // Calculate trust score with PRO membership
+    let trustScore = 50 // PRO membership gives a base trust score of 50
+    
+    // Add account age bonus
+    const accountAgeDays = Math.floor((Date.now() - user[0].createdAt.getTime()) / (1000 * 60 * 60 * 24))
+    if (accountAgeDays > 365) trustScore += 20
+    else if (accountAgeDays > 180) trustScore += 15
+    else if (accountAgeDays > 90) trustScore += 10
+    else if (accountAgeDays > 30) trustScore += 5
+    
+    // Determine badge based on score
+    let verificationBadge = 'unverified'
+    if (trustScore >= 80) verificationBadge = 'elite'
+    else if (trustScore >= 60) verificationBadge = 'premium'
+    else if (trustScore >= 40) verificationBadge = 'verified'
+
     let updateData: any = {
       isVerified: true,
       verificationMethod: proType.toLowerCase(),
       verificationDate: new Date(),
-      trustScore: 50 // PRO membership gives a base trust score of 50
+      trustScore,
+      verificationBadge
     }
 
     // Store the member number based on PRO type
     if (proType.toLowerCase() === 'ascap') {
       updateData.ascapMemberNumber = memberNumber
-      updateData.verificationBadge = 'verified'
+      console.log('Setting ASCAP member number:', memberNumber)
     } else if (proType.toLowerCase() === 'bmi') {
       updateData.bmiMemberNumber = memberNumber
-      updateData.verificationBadge = 'verified'
+      console.log('Setting BMI member number:', memberNumber)
     } else if (proType.toLowerCase() === 'sesac') {
       updateData.sesacMemberNumber = memberNumber
-      updateData.verificationBadge = 'verified'
+      console.log('Setting SESAC member number:', memberNumber)
     }
+
+    console.log('Update data:', JSON.stringify(updateData, null, 2))
 
     const updatedUser = await db.update(users)
       .set(updateData)
       .where(eq(users.id, userId))
       .returning()
+
+    console.log('Updated user:', JSON.stringify(updatedUser[0], null, 2))
 
     return NextResponse.json(updatedUser[0])
   } catch (error) {
@@ -150,9 +171,7 @@ export async function POST(request: NextRequest) {
     else if (accountAgeDays > 90) trustScore += 10
     else if (accountAgeDays > 30) trustScore += 5
 
-    // Role-based bonus (0-10 points)
-    if (userData.role === 'admin') trustScore += 10
-    else if (userData.role === 'artist') trustScore += 5
+    // Role-based bonus removed - roles don't affect trust score
 
     // Verification method bonus (0-30 points)
     if (userData.verificationMethod === 'identity') trustScore += 30
